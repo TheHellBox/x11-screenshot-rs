@@ -1,4 +1,4 @@
-extern crate x11_screenshot;
+extern crate x11-screenshot;
 fn main() {
     let screen = x11_screenshot::Screen::new();
     let frame = screen.cap_frame(1920,1080,0,0); //ScrW, ScrH, PosX, PosY
