@@ -5,8 +5,8 @@
 extern crate image;
 extern crate libc;
 extern crate x11;
-use self::image::{Pixel, Rgb, RgbImage};
-use self::libc::{c_int, c_ulong};
+use self::image::RgbImage;
+use self::libc::c_ulong;
 use std::{ptr, slice};
 use x11::xlib;
 /// A handle to an X11 screen.
@@ -42,19 +42,21 @@ impl Screen {
             })
         }
     }
-    /// Captures a screenshot of the entire screen.
-    pub fn capture(&self) -> image::ImageBuffer<image::Rgb<u8>, Vec<u8>> {
+    /// Tries to capture a screenshot of the entire screen.
+    ///
+    /// Returns an `RgbImage` on success, `None` on failure.
+    ///
+    /// See the documentation of the `image` crate on how to use `RgbImage`.
+    pub fn capture(&self) -> Option<RgbImage> {
         let screen: &mut xlib::Screen = &mut unsafe { *self.screen };
         self.capture_area(screen.width as u32, screen.height as u32, 0, 0)
     }
-    /// Captures a screenshot of the provided area.
-    pub fn capture_area(
-        &self,
-        w: u32,
-        h: u32,
-        x: i32,
-        y: i32,
-    ) -> image::ImageBuffer<image::Rgb<u8>, Vec<u8>> {
+    /// Tries to capture a screenshot of the provided area.
+    ///
+    /// Returns an `RgbImage` on success, `None` on failure.
+    ///
+    /// See the documentation of the `image` crate on how to use `RgbImage`.
+    pub fn capture_area(&self, w: u32, h: u32, x: i32, y: i32) -> Option<RgbImage> {
         let img = unsafe {
             xlib::XGetImage(
                 self.display,
@@ -64,11 +66,9 @@ impl Screen {
                 w,
                 h,
                 !1 as c_ulong,
-                2 as c_int,
+                xlib::ZPixmap,
             )
         };
-
-        let mut fullimg = RgbImage::new(w, h);
 
         if !img.is_null() {
             let image = unsafe { &mut *img };
@@ -78,18 +78,22 @@ impl Screen {
                     (image).width as usize * (image).height as usize,
                 )
             };
-            let clone = fullimg.clone();
-            let mut pixs = clone.enumerate_pixels();
-            for mut x in sl {
-                let (xc, yc, _p) = pixs.next().unwrap();
-                fullimg.put_pixel(xc, yc, *Rgb::from_slice(&[x.r, x.g, x.b]));
-            }
-        }
 
-        unsafe {
-            xlib::XDestroyImage(img as *mut _);
+            let mut bgr_iter = sl.iter();
+            let mut image_buffer = RgbImage::new(w, h);
+
+            for pix in image_buffer.pixels_mut() {
+                let bgr = bgr_iter.next().unwrap();
+                pix.data = [bgr.r, bgr.g, bgr.b];
+            }
+
+            unsafe {
+                xlib::XDestroyImage(img as *mut _);
+            }
+            Some(image_buffer)
+        } else {
+            None
         }
-        fullimg
     }
 }
 
