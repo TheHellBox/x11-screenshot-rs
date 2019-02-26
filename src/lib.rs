@@ -1,11 +1,8 @@
-#![allow(dead_code)]
-
 extern crate image;
 extern crate libc;
 extern crate x11;
 use self::image::{Pixel, Rgb, RgbImage};
 use self::libc::{c_int, c_ulong};
-use std::ffi::CString;
 use std::{ptr, slice};
 use x11::xlib;
 pub struct Screen {
@@ -13,7 +10,7 @@ pub struct Screen {
     window: xlib::Window,
 }
 #[derive(Debug)]
-pub struct bgr {
+pub struct Bgr {
     b: u8,
     g: u8,
     r: u8,
@@ -39,7 +36,7 @@ impl Screen {
         x: i32,
         y: i32,
     ) -> image::ImageBuffer<image::Rgb<u8>, Vec<u8>> {
-        let mut img = unsafe {
+        let img = unsafe {
             xlib::XGetImage(
                 self.display,
                 self.window,
@@ -54,9 +51,9 @@ impl Screen {
 
         let mut fullimg = RgbImage::new(w, h);
 
-        if (!img.is_null()) {
+        if !img.is_null() {
             let image = unsafe { &mut *img };
-            let sl: &[bgr] = unsafe {
+            let sl: &[Bgr] = unsafe {
                 slice::from_raw_parts(
                     (image).data as *const _,
                     (image).width as usize * (image).height as usize,
@@ -65,7 +62,7 @@ impl Screen {
             let clone = fullimg.clone();
             let mut pixs = clone.enumerate_pixels();
             for mut x in sl {
-                let (xc, yc, p) = pixs.next().unwrap();
+                let (xc, yc, _p) = pixs.next().unwrap();
                 fullimg.put_pixel(xc, yc, *Rgb::from_slice(&[x.r, x.g, x.b]));
             }
         }
