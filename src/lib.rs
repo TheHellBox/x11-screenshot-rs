@@ -36,7 +36,7 @@ impl Screen {
         }
     }
     /// Captures a screenshot of the provided area.
-    pub fn cap_frame(
+    pub fn capture_area(
         &self,
         w: u32,
         h: u32,
