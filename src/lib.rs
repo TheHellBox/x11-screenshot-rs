@@ -24,17 +24,22 @@ struct Bgr {
 }
 
 impl Screen {
-    /// Creates a handle to the default screen.
-    pub fn new() -> Screen {
+    /// Tries to open the X11 display, then returns a handle to the default screen.
+    ///
+    /// Returns `None` if the display could not be opened.
+    pub fn open() -> Option<Screen> {
         unsafe {
             let display = xlib::XOpenDisplay(ptr::null());
+            if display.is_null() {
+                return None;
+            }
             let screen = xlib::XDefaultScreenOfDisplay(display);
             let root = xlib::XRootWindowOfScreen(screen);
-            Screen {
+            Some(Screen {
                 display,
                 screen,
                 window: root,
-            }
+            })
         }
     }
     /// Captures a screenshot of the entire screen.
