@@ -10,7 +10,7 @@ pub struct Screen {
     window: xlib::Window,
 }
 #[derive(Debug)]
-pub struct Bgr {
+struct Bgr {
     b: u8,
     g: u8,
     r: u8,
