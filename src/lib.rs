@@ -80,3 +80,11 @@ impl Screen {
         fullimg
     }
 }
+
+impl Drop for Screen {
+    fn drop(&mut self) {
+        unsafe {
+            xlib::XCloseDisplay(self.display);
+        }
+    }
+}
