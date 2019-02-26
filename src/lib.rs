@@ -12,6 +12,7 @@ use x11::xlib;
 /// A handle to an X11 screen.
 pub struct Screen {
     display: *mut xlib::Display,
+    screen: *mut xlib::Screen,
     window: xlib::Window,
 }
 #[derive(Debug)]
@@ -27,13 +28,19 @@ impl Screen {
     pub fn new() -> Screen {
         unsafe {
             let display = xlib::XOpenDisplay(ptr::null());
-            let screen = xlib::XDefaultScreen(display);
-            let root = xlib::XRootWindow(display, screen);
+            let screen = xlib::XDefaultScreenOfDisplay(display);
+            let root = xlib::XRootWindowOfScreen(screen);
             Screen {
-                display: display,
+                display,
+                screen,
                 window: root,
             }
         }
+    }
+    /// Captures a screenshot of the entire screen.
+    pub fn capture(&self) -> image::ImageBuffer<image::Rgb<u8>, Vec<u8>> {
+        let screen: &mut xlib::Screen = &mut unsafe { *self.screen };
+        self.capture_area(screen.width as u32, screen.height as u32, 0, 0)
     }
     /// Captures a screenshot of the provided area.
     pub fn capture_area(
