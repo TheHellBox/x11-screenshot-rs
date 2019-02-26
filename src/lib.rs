@@ -1,3 +1,7 @@
+//! A library for capturing screenshots on X11.
+
+#![warn(missing_docs)]
+
 extern crate image;
 extern crate libc;
 extern crate x11;
@@ -5,6 +9,7 @@ use self::image::{Pixel, Rgb, RgbImage};
 use self::libc::{c_int, c_ulong};
 use std::{ptr, slice};
 use x11::xlib;
+/// A handle to an X11 screen.
 pub struct Screen {
     display: *mut xlib::Display,
     window: xlib::Window,
@@ -18,6 +23,7 @@ struct Bgr {
 }
 
 impl Screen {
+    /// Creates a handle to the default screen.
     pub fn new() -> Screen {
         unsafe {
             let display = xlib::XOpenDisplay(ptr::null());
@@ -29,6 +35,7 @@ impl Screen {
             }
         }
     }
+    /// Captures a screenshot of the provided area.
     pub fn cap_frame(
         &self,
         w: u32,
