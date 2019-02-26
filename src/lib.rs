@@ -3,10 +3,8 @@
 #![warn(missing_docs)]
 
 extern crate image;
-extern crate libc;
 extern crate x11;
 use self::image::RgbImage;
-use self::libc::c_ulong;
 use std::{ptr, slice};
 use x11::xlib;
 /// A handle to an X11 screen.
@@ -65,7 +63,7 @@ impl Screen {
                 y,
                 w,
                 h,
-                !1 as c_ulong,
+                !1,
                 xlib::ZPixmap,
             )
         };
