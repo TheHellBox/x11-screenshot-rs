@@ -1,7 +1,8 @@
 extern crate x11_screenshot;
 fn main() {
-    let screen = x11_screenshot::Screen::new();
-    let frame = screen.cap_frame(1920,1080,0,0); //ScrW, ScrH, PosX, PosY
-    frame.save("./a.png").unwrap(); // Save image
-    //Image docs http://www.piston.rs/image/image/index.html
+    let screen = x11_screenshot::Screen::open().expect("Failed to open screen");
+    let frame = screen.capture().expect("Failed to take screenshot");
+    // Save image
+    // For documentation on the image crate, see http://www.piston.rs/image/image/index.html
+    frame.save("example_screenshot.png").unwrap();
 }
