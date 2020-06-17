@@ -2,6 +2,8 @@
 
 Library for making screenshots.
 
+I wrote this 3 years ago, when I was only starting with rust, so the code quality can be quite poor.
+
 **Docs**: https://docs.rs/x11-screenshot/
 
 ## Example
