@@ -82,7 +82,7 @@ impl Screen {
 
             for pix in image_buffer.pixels_mut() {
                 let bgr = bgr_iter.next().unwrap();
-                pix.data = [bgr.r, bgr.g, bgr.b];
+                pix.0 = [bgr.r, bgr.g, bgr.b];
             }
 
             unsafe {
