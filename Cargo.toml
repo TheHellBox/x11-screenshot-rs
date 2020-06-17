@@ -8,13 +8,13 @@ repository = "https://github.com/TheHellBox/x11-screenshot-rs"
 description = "Screenshots with x11"
 
 [dependencies.image]
-version = "0.21.0"
+version = "0.23.5"
 default-features = false
 
 [dependencies.x11]
-version = "2.16.0"
+version = "2.18.2"
 features = ["xlib"]
 
 [[example]]
 name = "basic"
-required-features = ["image/png_codec"]
+required-features = ["image/ico"]
