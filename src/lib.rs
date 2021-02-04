@@ -2,9 +2,7 @@
 
 #![warn(missing_docs)]
 
-extern crate image;
-extern crate x11;
-use self::image::RgbImage;
+use image::RgbImage;
 use std::{ptr, slice};
 use x11::xlib;
 /// A handle to an X11 screen.
@@ -55,18 +53,8 @@ impl Screen {
     ///
     /// See the documentation of the `image` crate on how to use `RgbImage`.
     pub fn capture_area(&self, w: u32, h: u32, x: i32, y: i32) -> Option<RgbImage> {
-        let img = unsafe {
-            xlib::XGetImage(
-                self.display,
-                self.window,
-                x,
-                y,
-                w,
-                h,
-                !1,
-                xlib::ZPixmap,
-            )
-        };
+        let img =
+            unsafe { xlib::XGetImage(self.display, self.window, x, y, w, h, !1, xlib::ZPixmap) };
 
         if !img.is_null() {
             let image = unsafe { &mut *img };
