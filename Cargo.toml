@@ -1,6 +1,6 @@
 [package]
 name = "x11-screenshot"
-version = "0.2.0"
+version = "0.2.1"
 authors = ["TheHellBox <thehellbox11@gmail.com>"]
 keywords = ["X11", "screen", "screenshot", "capture"]
 license = "MIT"
